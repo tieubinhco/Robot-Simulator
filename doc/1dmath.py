@@ -47,27 +47,32 @@ while(True):
     Tl = (-Tstall/RPMmax * rpmL + Tstall) * PowerL * Battery
     Fl = T/radius - coef_kinetic * mass * 9.81
 	#right wheel 
-	Tr = (-Tstall/RPMmax * rpmR + Tstall) * PowerR * Battery
+    Tr = (-Tstall/RPMmax * rpmR + Tstall) * PowerR * Battery
     Fr = T/radius - coef_kinetic * mass * 9.81
+
+    veloL += Fl/mass * deltaT 
+    veloR += Fr/mass * deltaT
 	
 	#forward force as average between two motor forces and torque from the force differential 
-	F_fwd = (Fl + Fr)/2 
-	T_total = (Fl-Fr) * d 
-	MOI = mass * Distance**2 #really crappy MOI calc
+    F_fwd = (Fl + Fr)/2 - FRICTIONal force #YOU NEED TO DO THIS DIRECTIONALLY
+    T_total = (Fl-Fr) * d 
+    MOI = mass * Distance**2 #really crappy MOI calc
 	
 	#calculate accelerations and velocities
-	omega += (T_total/MOI)*deltaT #integrate angular accel for angular velo
+    omega += (T_total/MOI)*deltaT #integrate angular accel for angular velo
 	
-	accel = F_fwd/mass 
+    accel = F_fwd/mass 
     velocity += accel * deltaT
 	
-	theta += (omega+omegaPrev)/2 * deltaT
+    theta += (omega+omegaPrev)/2 * deltaT
     x += ((velocity+vprev)/2 * deltaT) * cos(theta)
-	y += ((velocity+vprev)/2 * deltaT) * sin(theta)
+    y += ((velocity+vprev)/2 * deltaT) * sin(theta)
 	
-	vprev = velocity
-	omegaprev = omega
+    vprev = velocity
+    omegaprev = omega
 	
-	#calculate the actual rpms of the motors 
-    rpm = (velocity/r) * 1/2  #times some conversion factor for radians per sec to rev per minute
+	#calculate the actual rpms of the motors
+    #DO NOT FORGET YOUR CHAIN, but also the conversion factor
+    rpmL = (veloL/r) #times some conversion factor for radians per sec to rev per minute
+    rpmR = (veloR/r)
     
