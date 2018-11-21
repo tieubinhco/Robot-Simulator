@@ -45,8 +45,8 @@ class Robot:
         #Calculate instant motor output torque based on the RPM/Torque curve and applied power
         torqueL = (-self.Tstall/self.maxRPM * self.rpmL + self.Tstall) * speedL * battery
         torqueR = (-self.Tstall/self.maxRPM * self.rpmR + self.Tstall) * speedR * battery
-        print(torqueL)
-        print(torqueR)
+        #print(torqueL)
+        #print(torqueR)
     
         #Compute tangential force vectors, net force by subtracting inline friction forces
         forceL = torqueL/self.wheelRadius - self.uk * self.mass * 9.81
@@ -78,12 +78,15 @@ class Robot:
         #janky RPM calculation, this is probably wrong
         self.rpmL = self.veloL/self.wheelRadius * (60/(2*math.pi))
         self.rpmR = self.veloR/self.wheelRadius * (60/(2*math.pi))
-        
+
+    def getTelemetry(self):
+        return 
+        #return [self.]
     def getPos(self):
         return [self.x, self.y, self.head]
        
 
-s = Robot(0, 0, 0, 1.00, 0.1, 0.2286, 6.8, 0.1016, 1.67, 100, 0.0, 0.0, 0.0, 0.0)
-for i in range(0, 250):
-    s.update(0.01, 1.0, 1.0, 1.0)
-print(s.getPos())
+#s = Robot(0, 0, 0, 1.00, 0.1, 0.2286, 6.8, 0.1016, 1.67, 100, 0.0, 0.0, 0.0, 0.0)
+#for i in range(0, 250):
+#    s.update(0.01, 1.0, 1.0, 1.0)
+#print(s.getPos())
