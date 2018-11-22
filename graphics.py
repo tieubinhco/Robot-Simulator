@@ -10,7 +10,8 @@ class Graphics: #graph trail, hold trail buffer array
         self.rect = self.sprite.get_rect()
         self.rect.center = (100, 100)
 
-        self.sprite, self.rect = self.rot_center(self.sprite, self.rect, 30)
+        #self.sprite, self.rect = self.rot_center(self.sprite, self.rect, 30)
+        self.angle = 0
         #self.angle+=0.01
         
     def translateCoord(self, x, y):
@@ -25,8 +26,9 @@ class Graphics: #graph trail, hold trail buffer array
     def updateGraphics(self):
         pygame.event.get()
         self.screen.fill((0,0,0))  
-       
-        
-        self.screen.blit(self.sprite, self.rect)
+
+        self.sprite2, self.rect2 = self.rot_center(self.sprite, self.rect, self.angle)
+        self.angle+= 1
+        self.screen.blit(self.sprite2, self.rect2)
         pygame.display.flip()
         return
