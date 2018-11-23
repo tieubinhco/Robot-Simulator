@@ -1,10 +1,16 @@
+'''
+    TODO:
+    -Allow multi-robot support
+    -Allow better simulation
+'''
+
+
 import threading
 import robot
 import time
 import graphics
 
 #start world thread, control thread, and graphics thread 
-
 class Simulation:
     #give world,control,and graphics frequencies in hertz, give simulation rate multiple
     #allow max on world frequency to use CPU inhibited speed
@@ -23,8 +29,9 @@ class Simulation:
         self.robots = robots
         self.controllers = controllers
 
-        self.speedL = 0.0
-        self.speedR = 0.0
+        self.speeds = []
+        for i in robots:
+            self.speeds.append((0, 0))
         
         self.world = threading.Thread(target=self.worldThread)
         self.graphics = threading.Thread(target=self.graphicsThread)
@@ -38,21 +45,22 @@ class Simulation:
         cnt = 12 
         while(1):
             t = time.time()
-            self.robots[0].update((t - self.prevT)*self.simRate, 1.0, self.speedL, self.speedR)
+            for i in range(len(self.robots)):
+                self.robots[i].update((t - self.prevT)*self.simRate, 1.0, self.speeds[i][0], self.speeds[i][1])
             time.sleep(float(self.worldFreq)/float(self.simRate))
-            #print(str(cnt) + " | " + str((time.time()-self.start)*self.simRate) +" | " +str(self.robots[0].getPos()[1]))
-            #cnt+=1
+            print(str(cnt) + " | " + str((time.time()-self.start)*self.simRate) +" | " +str(self.robots[0].getPos()[0]))
+            cnt+=1
             self.prevT = t
     def controlThread(self):
         while(1):
-            self.speedL = 1.0
-            self.speedR = 1.0
+            self.speeds[0] = (1.0, 0.5)
             time.sleep(self.controlFreq/self.simRate)
     def graphicsThread(self):
-        window = graphics.Graphics(self.robots)
+        window = graphics.Graphics((400,400), (2,2), self.robots)
         while(1):
             window.updateGraphics()
             time.sleep(self.graphicsFreq/self.simRate)
+        return
 
 #battery1 = battery.Battery(1.0, 's') paramterize robot with a battery
 robot1 = robot.Robot(0, 0, 0, 1.00, 0.1, 0.2286, 6.8, 0.1016, 1.67, 100, 0.0, 0.0, 0.0, 0.0)

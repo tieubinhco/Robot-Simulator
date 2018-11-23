@@ -84,7 +84,8 @@ class Robot:
         #return [self.]
     def getPos(self):
         return [self.x, self.y, self.head]
-       
+    def getWidth(self):
+        return self.width
 
 #s = Robot(0, 0, 0, 1.00, 0.1, 0.2286, 6.8, 0.1016, 1.67, 100, 0.0, 0.0, 0.0, 0.0)
 #for i in range(0, 250):
