@@ -6,6 +6,7 @@
 '''
 
 import pygame
+import trail
 
 class Graphics: #graph trail, hold trail buffer array, draw desired paths and end points
     def __init__(self, screenDimensions, worldDimensions, robots):
@@ -17,6 +18,9 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         self.worldDimensions = worldDimensions
         self.screenDimensions = screenDimensions
         self.robots = robots
+
+        #trail data
+        self.trails = []
 
         self.q = 0
 
@@ -36,13 +40,11 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
             self.robotSprites[c].convert()
             self.robotSprites[c].set_colorkey((0, 0, 0))
 
-            #print(robot.getPos()[0])
+            self.trails.append(trail.Trail(1*worldDimensions[0]))
+
             c+=1
         
-        #self.rect.center = (100, 100)
 
-        #self.sprite, self.rect = self.rot_center(self.sprite, self.rect, 30)
-        #self.angle = 0
       
         
     def translateCoord(self, x, y):
@@ -67,7 +69,7 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         return
 
     # Draw robot position history for debugging path following
-    def enableTrail(self, robot, maxPoints):
+    def enableTrail(self, robotIndex, trailEnabled, maxPoints):
         return
 
 
@@ -78,10 +80,11 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         for i in range(len(self.robots)):
             sc, rc = self.rot_center(self.robotSprites[i],self.robotHitboxes[i], self.robots[i].getPos()[2] * 180.0/3.141592)
             rc.center = self.translateCoord(self.robots[i].getPos()[0], self.robots[i].getPos()[1])
-            #self.q +=1
-            #sc, rc = self.rot_center(self.robotSprites[i],self.robotHitboxes[i], self.q)
-            #rc.center = self.translateCoord(0, 0.5)
             self.screen.blit(sc, rc)
+
+            self.trails[i].trail.append(rc.center)
+            self.trails[i].drawTrail(self.screen)
+
 
         pygame.display.flip()
         return
