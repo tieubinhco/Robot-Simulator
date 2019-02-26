@@ -6,6 +6,7 @@
 '''
 
 import pygame
+
 class Graphics: #graph trail, hold trail buffer array, draw desired paths and end points
     def __init__(self, screenDimensions, worldDimensions, robots):
         #initialize graphics
@@ -17,16 +18,24 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         self.screenDimensions = screenDimensions
         self.robots = robots
 
+        self.q = 0
+
         #initalize screen resources 
         self.robotSprites = []
         self.robotHitboxes = []
         c = 0
         for robot in self.robots: 
             self.robotSprites.append(pygame.Surface((self.translateDim(robot.getWidth(),0)[0], self.translateDim(0, robot.getWidth())[1])))
-            self.robotSprites[c].fill((255,0,0))
-            self.robotSprites[c].set_colorkey((0,0,0))
+            #self.robotSprites[c].fill((255,0,0))
+            #self.robotSprites[c].set_colorkey((0,0,0))
             self.robotHitboxes.append(self.robotSprites[c].get_rect())
             self.robotHitboxes[c].center = self.translateCoord(robot.getPos()[0], robot.getPos()[1])
+
+            sprite = pygame.image.load("arrow.jpg")
+            self.robotSprites[c] = pygame.transform.scale(sprite, self.robotHitboxes[c].size)
+            self.robotSprites[c].convert()
+            self.robotSprites[c].set_colorkey((0, 0, 0))
+
             #print(robot.getPos()[0])
             c+=1
         
@@ -38,7 +47,7 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         
     def translateCoord(self, x, y):
         x = x * (self.screenDimensions[0]/self.worldDimensions[0]) + self.screenDimensions[0]/2
-        y = y * (self.screenDimensions[1]/self.worldDimensions[1]) + self.screenDimensions[1]/2
+        y = -y * (self.screenDimensions[1]/self.worldDimensions[1]) + self.screenDimensions[1]/2
         #print(x)
         return (x, y)
     
@@ -60,8 +69,11 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         for i in range(len(self.robots)):
             sc, rc = self.rot_center(self.robotSprites[i],self.robotHitboxes[i], self.robots[i].getPos()[2] * 180.0/3.141592)
             rc.center = self.translateCoord(self.robots[i].getPos()[0], self.robots[i].getPos()[1])
-            
+            #self.q +=1
+            #sc, rc = self.rot_center(self.robotSprites[i],self.robotHitboxes[i], self.q)
+            #rc.center = self.translateCoord(0, 0.5)
             self.screen.blit(sc, rc)
-       
+
         pygame.display.flip()
         return
+
