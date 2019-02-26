@@ -1,5 +1,7 @@
 
 class Battery:
-    def getPercentage():
+    def getPercentage(self):
+        return
 
-    def updatePercentage(speedL, speedR, deltaT, torque)     
+    def updatePercentage(self, speedR, deltaT, torque):
+        return
