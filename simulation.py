@@ -51,7 +51,7 @@ class Simulation:
 
     def worldThread(self):
         self.start = time.time()
-        cnt = 12 
+        cnt = 0
         while(1):
             t = time.time()
             for i in range(len(self.robots)):
@@ -68,7 +68,7 @@ class Simulation:
 
             time.sleep(self.controlFreq/self.simRate)
     def graphicsThread(self):
-        self.window = graphics.Graphics((400,400), (4,2), self.robots)
+        self.window = graphics.Graphics((400,400), (2,2), self.robots)
         while(1):
             self.window.updateGraphics()
             time.sleep(self.graphicsFreq/self.simRate)
