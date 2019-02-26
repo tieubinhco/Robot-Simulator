@@ -68,7 +68,7 @@ class Simulation:
 
             time.sleep(self.controlFreq/self.simRate)
     def graphicsThread(self):
-        self.window = graphics.Graphics((400,400), (2,2), self.robots)
+        self.window = graphics.Graphics((1000,1000), (10,10), self.robots)
         while(1):
             self.window.updateGraphics()
             time.sleep(self.graphicsFreq/self.simRate)

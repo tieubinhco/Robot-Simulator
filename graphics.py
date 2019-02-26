@@ -40,7 +40,7 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
             self.robotSprites[c].convert()
             self.robotSprites[c].set_colorkey((0, 0, 0))
 
-            self.trails.append(trail.Trail(1*worldDimensions[0]))
+            self.trails.append(trail.Trail(int(5*self.robots[c].getWidth())))
 
             c+=1
         
