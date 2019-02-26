@@ -10,6 +10,8 @@ import robot
 import idealrobot
 import time
 import graphics
+import plot
+import numpy as np
 
 #start world thread, control thread, and graphics thread 
 class Simulation:
@@ -37,9 +39,13 @@ class Simulation:
         self.world = threading.Thread(target=self.worldThread)
         self.graphics = threading.Thread(target=self.graphicsThread)
         self.control = threading.Thread(target=self.controlThread)
+        self.plot = threading.Thread(target=self.plotThread)
         self.world.start()
         self.graphics.start()
         self.control.start()
+        self.plot.start()
+
+        self.plot1 = None
 
     def worldThread(self):
         self.start = time.time()
@@ -49,7 +55,7 @@ class Simulation:
             for i in range(len(self.robots)):
                 self.robots[i].update((t - self.prevT)*self.simRate, 1.0, self.speeds[i][0], self.speeds[i][1])
             time.sleep(float(self.worldFreq)/float(self.simRate))
-            print(str(cnt) + " | " + str((time.time()-self.start)*self.simRate) + " | " + str(self.robots[0].getPos()[2]))
+            #print(str(cnt) + " | " + str((time.time()-self.start)*self.simRate) + " | " + str(self.robots[0].getPos()[2]))
             cnt+=1
             self.prevT = t
     def controlThread(self):
@@ -60,13 +66,23 @@ class Simulation:
     def graphicsThread(self):
         window = graphics.Graphics((400,400), (2,2), self.robots)
         while(1):
-            #print("hi")
             window.updateGraphics()
             time.sleep(self.graphicsFreq/self.simRate)
         return
+
+    def plotThread(self):
+        #print("1")
+        plot1 = plot.Plot("time v theta", "time", "theta", np.empty(0), np.empty(0))
+        while(1):
+            plot1.addData(time.time(), self.robots[0].getPos()[0])
+            plot1.plot()
+            time.sleep(0.01)
+
 
 # battery1 = battery.Battery(1.0, 's') paramterize robot with a battery
 robot1 = robot.Robot(0, 0, 0, 1.00, 0.1, 0.2286, 6.8, 0.1016, 1.67, 100, 0.0, 0.0, 0.0, 0.0)
 robot2 = idealrobot.IdealRobot(0, 0, 0, 0.2286)
 #controller1 = pid.PID()
 s = Simulation(100, 40, 30, 1.0, [robot1, robot2], [])
+
+
