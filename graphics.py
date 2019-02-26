@@ -61,7 +61,16 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         rot_image = pygame.transform.rotate(image, angle)
         rot_rect = rot_image.get_rect(center=rect.center)
         return rot_image,rot_rect
-    
+
+    # Draw a robot path for debugging path following
+    def drawPath(self, path):
+        return
+
+    # Draw robot position history for debugging path following
+    def enableTrail(self, robot, maxPoints):
+        return
+
+
     def updateGraphics(self):
         pygame.event.get()
         self.screen.fill((0,0,0))  

@@ -11,6 +11,7 @@ import idealrobot
 import time
 import graphics
 import plot
+import Controllers.RawPowerController
 import numpy as np
 
 #start world thread, control thread, and graphics thread 
@@ -60,8 +61,10 @@ class Simulation:
             self.prevT = t
     def controlThread(self):
         while(1):
-            self.speeds[0] = (0.5, 0.9)
-            self.speeds[1] = (0.5, 0.9)
+            for i in range(len(self.robots)):
+                command = self.controllers[i].update();
+                self.speeds[i] = command
+
             time.sleep(self.controlFreq/self.simRate)
     def graphicsThread(self):
         window = graphics.Graphics((400,400), (2,2), self.robots)
@@ -82,7 +85,7 @@ class Simulation:
 # battery1 = battery.Battery(1.0, 's') paramterize robot with a battery
 robot1 = robot.Robot(0, 0, 0, 1.00, 0.1, 0.2286, 6.8, 0.1016, 1.67, 100, 0.0, 0.0, 0.0, 0.0)
 robot2 = idealrobot.IdealRobot(0, 0, 0, 0.2286)
-#controller1 = pid.PID()
-s = Simulation(100, 40, 30, 1.0, [robot1, robot2], [])
+controller1 = Controllers.RawPowerController.RawPowerController(0.5, 0.9)
+s = Simulation(100, 40, 30, 1.0, [robot1, robot2], [controller1, controller1])
 
 

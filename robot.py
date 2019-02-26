@@ -59,7 +59,7 @@ class Robot:
         #forward force is the average of the two motor forces
         f_fwd = (forceL + forceR)/2
         #torque is created by the differential between the forces multiplied by radius 
-        torque = (forceR - forceL) * self.width
+        torque = (forceR - forceL) * self.width/2
 
         #integrate angular acceleration, calculated from Torque over MOI for velocity
         omega = self.prevOmega+(torque/self.MOI) * deltaT

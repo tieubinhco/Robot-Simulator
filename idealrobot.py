@@ -10,7 +10,7 @@ class IdealRobot:
         self.width = width
         
     def update(self, deltaT, battery, veloL, veloR): #ignore battery
-        omega = (veloR - veloL)/(2 * self.width)
+        omega = (veloR - veloL)/(2 * self.width/2)
         self.head += (omega * deltaT)
         #integrate velocity for position, break up into vertical and horizontal comp
         self.x += ((veloL + veloR)/2 * deltaT) * math.cos(self.head)
