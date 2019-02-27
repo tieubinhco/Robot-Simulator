@@ -43,14 +43,20 @@ class Robot:
         
     def update(self, deltaT, battery, speedL, speedR):
         #Calculate instant motor output torque based on the RPM/Torque curve and applied power
-        torqueL = (-self.Tstall/self.maxRPM * self.rpmL + self.Tstall) * speedL * battery
-        torqueR = (-self.Tstall/self.maxRPM * self.rpmR + self.Tstall) * speedR * battery
-        #print(torqueL)
-        #print(torqueR)
-    
-        #Compute tangential force vectors, net force by subtracting inline friction forces
-        forceL = torqueL/self.wheelRadius - self.uk * self.mass * 9.81
-        forceR = torqueR/self.wheelRadius - self.uk * self.mass * 9.81
+        torqueL = (-self.Tstall/self.maxRPM * abs(self.rpmL) + self.Tstall) * abs(speedL) * battery
+        torqueR = (-self.Tstall/self.maxRPM * abs(self.rpmR) + self.Tstall) * abs(speedR) * battery
+
+        #Preserve signs
+        lSign = 1
+        rSign = 1
+        if(speedL != 0):
+            lSign = (abs(speedL)/speedL)
+        if(speedR != 0):
+            rSign = (abs(speedR)/speedR)
+
+        #Compute tangential force vectors, net force by subtracting inline friction forces, max friction
+        forceL = (torqueL/self.wheelRadius - self.uk * self.mass * 9.81)* lSign #maintain signs
+        forceR = (torqueR/self.wheelRadius - self.uk * self.mass * 9.81)* rSign #problem, in static case, robot goes backward
 
         #Integrate net acceleration for tangential velocities 
         self.veloL += forceL/self.mass * deltaT
@@ -78,6 +84,7 @@ class Robot:
         #janky RPM calculation, this is probably wrong
         self.rpmL = self.veloL/self.wheelRadius * (60/(2*math.pi))
         self.rpmR = self.veloR/self.wheelRadius * (60/(2*math.pi))
+        print(str(torqueL) + " " + str(torqueR))
 
     def getTelemetry(self):
         return 

@@ -1,7 +1,7 @@
 import pygame
 
 class Trail:
-    def __init__(self, thickness=1, size=400, color=(0,255,255)):
+    def __init__(self, thickness=1, size=100, color=(0,255,255)):
         self.trail = []
         self.enabled = True
         self.size = size
