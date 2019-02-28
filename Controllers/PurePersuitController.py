@@ -1,3 +1,5 @@
+import Controllers.JoystickController
+import pygame
 
 class Point:
     def __init__(self, x,y ):
@@ -23,6 +25,7 @@ class PurePersuitController:
         self.lookAhead = lookAhead
         self.lookAheadPoint = None
         self.maxVelo = None
+        self.jsTest = Controllers.JoystickController.JoystickController()
         return
 
     def addPoint(self, x, y):
@@ -77,8 +80,16 @@ class PurePersuitController:
 
     def removePassedPoints(self):
         return
-    def update(self):
-        return
+    def update(self, sim=None): #optional param sim
+        #self.getLookAheadPoint(Point(sim.robots[0].x, sim.robots[0].y))
+        return self.jsTest.update()
 
-    def visualDebug(self, screen):
+    def visualDebug(self, g):
+
+        for i in range(len(self.points)-1):
+            p1 = g.translatePoint(self.points[i])
+            p2 = g.translatePoint(self.points[i+1])
+            pygame.draw.line(g.screen, (0, 255, 0), p1, p2, 4)
+
+        pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(self.lookAheadPoint), 4, 0)
         return

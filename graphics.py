@@ -9,7 +9,7 @@ import pygame
 import trail
 
 class Graphics: #graph trail, hold trail buffer array, draw desired paths and end points
-    def __init__(self, screenDimensions, worldDimensions, robots):
+    def __init__(self, screenDimensions, worldDimensions, robots, controllers):
         #initialize graphics
         pygame.init()
         self.screen = pygame.display.set_mode(screenDimensions)
@@ -18,9 +18,11 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         self.worldDimensions = worldDimensions
         self.screenDimensions = screenDimensions
         self.robots = robots
+        self.controllers = controllers
 
         #trail data
         self.trails = []
+        self.debuggers = []
 
         self.q = 0
 
@@ -52,6 +54,12 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         y = -y * (self.screenDimensions[1]/self.worldDimensions[1]) + self.screenDimensions[1]/2
         #print(x)
         return (x, y)
+
+    def translatePoint(self, point):
+        x = point.x * (self.screenDimensions[0] / self.worldDimensions[0]) + self.screenDimensions[0] / 2
+        y = -point.y * (self.screenDimensions[1] / self.worldDimensions[1]) + self.screenDimensions[1] / 2
+        # print(x)
+        return (int(x), int(y))
     
     def translateDim(self, x, y):
         x = x * (self.screenDimensions[0]/self.worldDimensions[0])
@@ -72,6 +80,9 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
     def enableTrail(self, robotIndex, trailEnabled, maxPoints):
         return
 
+    #add a debugging draw method to be executed
+    def addDebugger(self, debugger):
+        self.debuggers.append(debugger)
 
     def updateGraphics(self):
         pygame.event.get()
@@ -84,6 +95,9 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
 
             self.trails[i].trail.append(rc.center)
             self.trails[i].drawTrail(self.screen)
+
+        for f in self.debuggers:
+            f(self)
 
 
         pygame.display.flip()

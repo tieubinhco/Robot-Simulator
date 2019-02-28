@@ -59,18 +59,18 @@ class Simulation:
             for i in range(len(self.robots)):
                 self.robots[i].update((t - self.prevT)*self.simRate, 1.0, self.speeds[i][0], self.speeds[i][1])
             time.sleep(float(self.worldFreq)/float(self.simRate))
-            print(str(cnt) + " | " + str((time.time()-self.start)*self.simRate) + " | " + str(self.robots[0].getPos()[1]))
+            #print(str(cnt) + " | " + str((time.time()-self.start)*self.simRate) + " | " + str(self.robots[0].getPos()[1]))
             cnt+=1
             self.prevT = t
     def controlThread(self):
         while(1):
             for i in range(len(self.robots)):
-                command = self.controllers[i].update();
+                command = self.controllers[i].update('''self''');
                 self.speeds[i] = command
 
             time.sleep(self.controlFreq/self.simRate)
     def graphicsThread(self):
-        self.window = graphics.Graphics((1000,1000), (10,10), self.robots)
+        self.window = graphics.Graphics((1000,1000), (10,10), self.robots, self.controllers)
         while(1):
             self.window.updateGraphics()
             time.sleep(self.graphicsFreq/self.simRate)
@@ -101,10 +101,14 @@ s = Simulation(100, 40, 30, 1.0, [robot2, robot3], [controller2, controller2])
 time.sleep(1)
 s.window.trails[0].color = (255, 0, 0)
 '''
-purePersuit = Controllers.PurePersuitController.PurePersuitController(3)
+
+robot1 = idealrobot.IdealRobot(0, 0, 0, 0.2286)
+purePersuit = Controllers.PurePersuitController.PurePersuitController(0.5)
 purePersuit.addPoint(0, 0)
-purePersuit.addPoint(8, 8)
+purePersuit.addPoint(0, 8)
 #purePersuit.addPoint(0, 20)
 print(str(purePersuit.getLookAheadPoint(Controllers.PurePersuitController.Point(0, 2))))
-
+s = Simulation(100, 40, 30, 1.0, [robot1], [purePersuit])
+time.sleep(1)
+s.window.addDebugger(purePersuit.visualDebug)
 
