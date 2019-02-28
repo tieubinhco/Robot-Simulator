@@ -55,6 +55,14 @@ class Robot:
             rSign = (abs(speedR)/speedR)
 
         #Compute tangential force vectors, net force by subtracting inline friction forces, max friction
+        forceFrictionL = self.uk * self.mass * 9.81
+        forceFrictionR = self.uk * self.mass * 9.81
+
+        if(torqueL > 0): #check if velo is zero crossing,
+            forceFrictionL = min(forceFrictionL, torqueL/self.wheelRadius)
+        if(torqueR > 0):
+            forceFrictionR = min(forceFrictionL, torqueR/self.wheelRadius)
+
         forceL = (torqueL/self.wheelRadius - self.uk * self.mass * 9.81)* lSign #maintain signs
         forceR = (torqueR/self.wheelRadius - self.uk * self.mass * 9.81)* rSign #problem, in static case, robot goes backward
 

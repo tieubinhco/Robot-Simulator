@@ -14,6 +14,7 @@ import plot
 import Controllers.RawPowerController
 import Controllers.JoystickController
 import numpy as np
+import Controllers.PurePersuitController
 
 #start world thread, control thread, and graphics thread 
 class Simulation:
@@ -85,15 +86,25 @@ class Simulation:
 
 
 
+
 #DO stuff thats sketch
 
 # battery1 = battery.Battery(1.0, 's') paramterize robot with a battery
+'''
 robot1 = robot.Robot(0, 0, 0, 1.00, 0.1, 0.2286, 6.8, 0.1016, 1.67, 100, 0.0, 0.0, 0.0, 0.0)
 robot2 = idealrobot.IdealRobot(0, 0, 0, 0.2286)
+robot3 = idealrobot.IdealRobot(-0.5, 0, 0, 0.2286)
+
 controller1 = Controllers.RawPowerController.RawPowerController(0.0, 0.0)
 controller2 = Controllers.JoystickController.JoystickController()
-s = Simulation(100, 40, 30, 1.0, [robot1, robot2], [controller2, controller2])
+s = Simulation(100, 40, 30, 1.0, [robot2, robot3], [controller2, controller2])
 time.sleep(1)
 s.window.trails[0].color = (255, 0, 0)
+'''
+purePersuit = Controllers.PurePersuitController.PurePersuitController(3)
+purePersuit.addPoint(0, 0)
+purePersuit.addPoint(8, 8)
+#purePersuit.addPoint(0, 20)
+print(str(purePersuit.getLookAheadPoint(Controllers.PurePersuitController.Point(0, 2))))
 
 
