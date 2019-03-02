@@ -65,7 +65,7 @@ class Simulation:
     def controlThread(self):
         while(1):
             for i in range(len(self.robots)):
-                command = self.controllers[i].update('''self''');
+                command = self.controllers[i].update(self.robots[i].getPos());
                 self.speeds[i] = command
 
             time.sleep(self.controlFreq/self.simRate)

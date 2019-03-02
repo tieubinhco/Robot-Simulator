@@ -80,8 +80,8 @@ class PurePersuitController:
 
     def removePassedPoints(self):
         return
-    def update(self, sim=None): #optional param sim
-        #self.getLookAheadPoint(Point(sim.robots[0].x, sim.robots[0].y))
+    def update(self, pos): #optional param sim
+        self.getLookAheadPoint(Point(pos[0], pos[1]))
         return self.jsTest.update()
 
     def visualDebug(self, g):
