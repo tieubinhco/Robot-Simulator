@@ -26,13 +26,14 @@ class PurePersuitController:
         self.lookAheadPoint = None
         self.maxVelo = None
         self.jsTest = Controllers.JoystickController.JoystickController()
+        self.loc = None
         return
 
     def addPoint(self, x, y):
         self.points.append(Point(x, y))
 
     def getLookAheadPoint(self, loc):
-
+        self.loc = loc
         # get closest path point
         distance = float("inf")
         closest = 0
@@ -91,5 +92,7 @@ class PurePersuitController:
             p2 = g.translatePoint(self.points[i+1])
             pygame.draw.line(g.screen, (0, 255, 0), p1, p2, 4)
 
+        pygame.draw.circle(g.screen, (255, 0, 0), g.translatePoint(self.loc), int(g.translateDim(self.lookAhead, 0)[0]), 4)
         pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(self.lookAheadPoint), 4, 0)
+        print(self.loc)
         return
