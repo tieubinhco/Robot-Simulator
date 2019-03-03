@@ -103,10 +103,11 @@ s.window.trails[0].color = (255, 0, 0)
 '''
 
 robot1 = idealrobot.IdealRobot(0, 0, 0, 0.2286)
-purePersuit = Controllers.PurePersuitController.PurePersuitController(1)
+purePersuit = Controllers.PurePersuitController.PurePersuitController(0.5)
 purePersuit.addPoint(0, 0)
 purePersuit.addPoint(0, 3)
 purePersuit.addPoint(3, 2)
+purePersuit.addPoint(4, 0)
 #purePersuit.addPoint(0, 20)
 print(str(purePersuit.getLookAheadPoint(Controllers.PurePersuitController.Point(0, 2))))
 s = Simulation(100, 40, 30, 1.0, [robot1], [purePersuit])

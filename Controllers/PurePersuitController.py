@@ -7,6 +7,10 @@ class Point:
         self.y = y
     def dot(self, point):
         return self.x * point.x + self.y * point.y
+    def mag(self):
+        return (self.x**2 + self.y**2)**0.5
+    def normalize(self):
+        return Point(self.x/self.mag(), self.y/self.mag())
     def __sub__(self, point):
         return Point(self.x - point.x, self.y - point.y)
     def __add__(self, point):
@@ -47,7 +51,11 @@ class PurePersuitController:
 
         #calculate lookahead using parametric subsitution to find intersections https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm/1084899#1084899
         E = self.points[closest]
-        L = self.points[closest+1]
+        L = None
+        try:
+            L = self.points[closest+1]
+        except:
+            L = self.points[closest] + (self.points[closest]-self.points[closest-1]).normalize() * self.lookAhead
         C = loc
         r = self.lookAhead
         d = L - E
@@ -57,9 +65,17 @@ class PurePersuitController:
         b = 2 * f.dot(d)
         c = f.dot(f) - r**2
         discriminant = b**2 - 4 * a * c
-        if(discriminant < 0):
-            print("does not intersect")
-        else:
+        if(discriminant < 0): # choose previous path point to see if that works
+            #print("does not intersect")
+            E = self.points[closest-1]
+            L = self.points[closest]
+            d = L - E
+            f = E - C
+            a = d.dot(d)
+            b = 2 * f.dot(d)
+            c = f.dot(f) - r ** 2
+            discriminant = b ** 2 - 4 * a * c
+        if(discriminant >= 0):
             discriminant = discriminant**0.5
             t1 = (-b - discriminant)/(2*a)
             t2 = (-b + discriminant)/(2*a)
@@ -81,6 +97,11 @@ class PurePersuitController:
 
     def removePassedPoints(self):
         return
+
+    def smoothPath(self):
+        #for i in range(len(self.points)):
+        return
+
     def update(self, pos): #optional param sim
         self.getLookAheadPoint(Point(pos[0], pos[1]))
         return self.jsTest.update()
@@ -94,5 +115,5 @@ class PurePersuitController:
 
         pygame.draw.circle(g.screen, (255, 0, 0), g.translatePoint(self.loc), int(g.translateDim(self.lookAhead, 0)[0]), 4)
         pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(self.lookAheadPoint), 4, 0)
-        print(self.loc)
+        #print(self.loc)
         return
