@@ -27,7 +27,7 @@ class PurePersuitController:
     def __init__(self, lookAhead):
         self.points = []
         self.lookAhead = lookAhead
-        self.lookAheadPoint = None
+        self.lookAheadPoint = Point(0, 0)
         self.maxVelo = None
         self.jsTest = Controllers.JoystickController.JoystickController()
         self.loc = None
@@ -36,9 +36,39 @@ class PurePersuitController:
     def addPoint(self, x, y):
         self.points.append(Point(x, y))
 
-    def calculateIntersect(self, loc, start, end):
+    def calculateIntersect(self, loc, start, end): #calculate using parametric subsitution to find intersections https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm/1084899#1084899
+        E = start
+        L = end
+        C = loc
+        r = self.lookAhead
+        d = L - E
+        f = E - C
 
-        return
+        a = d.dot(d)
+        b = 2 * f.dot(d)
+        c = f.dot(f) - r ** 2
+        discriminant = b ** 2 - 4 * a * c
+
+        if (discriminant < 0):
+            return None
+        else:  # limit discriminant somehow?
+            discriminant = discriminant ** 0.5
+            t1 = (-b - discriminant) / (2 * a)
+            t2 = (-b + discriminant) / (2 * a)
+
+            canidates = {}
+            if (t1 >= 0 and t1 <= 1.0):
+                canidates[t1] = E + d * t1
+            if (t2 >= 0 and t2 <= 1.0):
+                canidates[t2] = E + d * t2
+
+            if (len(canidates.keys()) > 0):
+                intersect = canidates[max(canidates.keys())]
+                return intersect
+            else:
+                return None
+
+
 
     def getLookAheadPoint(self, loc):
         self.loc = loc
@@ -53,55 +83,25 @@ class PurePersuitController:
 
         #print(str(self.points[closest]))
 
-        #calculate lookahead using parametric subsitution to find intersections https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm/1084899#1084899
         E = self.points[closest]
-
         L = None
         try:
             L = self.points[closest+1]
         except:
             L = self.points[closest] + (self.points[closest]-self.points[closest-1]).normalize() * self.lookAhead
-        C = loc
-        r = self.lookAhead
-        d = L - E
-        f = E - C
 
-        a = d.dot(d)
-        b = 2 * f.dot(d)
-        c = f.dot(f) - r**2
-        discriminant = b**2 - 4 * a * c
 
-        #print(discriminant)
+        p = self.calculateIntersect(loc, E, L)
+        #print(self.lookAheadPoint)
+        if(p == None):
+            p = self.calculateIntersect(loc, self.points[closest-1], self.points[closest])
+            if(p != None):
+                self.lookAheadPoint = p
+        else:
+            self.lookAheadPoint = p
+        #self.lookAheadPoint = None;
 
-        if(discriminant < 0): # choose previous path point to see if that works
-            #print("trying previous")
-            E = self.points[closest-1]
-            L = self.points[closest]
-            d = L - E
-            f = E - C
-            a = d.dot(d)
-            b = 2 * f.dot(d)
-            c = f.dot(f) - r ** 2
-            discriminant = b ** 2 - 4 * a * c
-        if(discriminant >= 0): #limit discriminant somehow?
-            #print(E)
-            #print(L)
-            #print(discriminant)
-            discriminant = discriminant**0.5
-            t1 = (-b - discriminant)/(2*a)
-            t2 = (-b + discriminant)/(2*a)
 
-            canidates = {}
-            if(t1 >= 0 and t1 <= 1.0):
-                canidates[t1] = E + d * t1
-            if(t2 >= 0 and t2 <= 1.0):
-                canidates[t2] = E + d * t2
-
-            if(len(canidates.keys()) > 0):
-                self.lookAheadPoint = canidates[max(canidates.keys())]
-                return self.lookAheadPoint
-            else:
-                print("does not intersect")
 
         #alternatively, get lookahead by picking closest path point, then going one lookahead up that segment
 
