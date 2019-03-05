@@ -36,6 +36,10 @@ class PurePersuitController:
     def addPoint(self, x, y):
         self.points.append(Point(x, y))
 
+    def calculateIntersect(self, loc, start, end):
+
+        return
+
     def getLookAheadPoint(self, loc):
         self.loc = loc
         # get closest path point
@@ -51,6 +55,7 @@ class PurePersuitController:
 
         #calculate lookahead using parametric subsitution to find intersections https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm/1084899#1084899
         E = self.points[closest]
+
         L = None
         try:
             L = self.points[closest+1]
@@ -65,8 +70,11 @@ class PurePersuitController:
         b = 2 * f.dot(d)
         c = f.dot(f) - r**2
         discriminant = b**2 - 4 * a * c
+
+        #print(discriminant)
+
         if(discriminant < 0): # choose previous path point to see if that works
-            #print("does not intersect")
+            #print("trying previous")
             E = self.points[closest-1]
             L = self.points[closest]
             d = L - E
@@ -75,7 +83,10 @@ class PurePersuitController:
             b = 2 * f.dot(d)
             c = f.dot(f) - r ** 2
             discriminant = b ** 2 - 4 * a * c
-        if(discriminant >= 0):
+        if(discriminant >= 0): #limit discriminant somehow?
+            #print(E)
+            #print(L)
+            #print(discriminant)
             discriminant = discriminant**0.5
             t1 = (-b - discriminant)/(2*a)
             t2 = (-b + discriminant)/(2*a)
