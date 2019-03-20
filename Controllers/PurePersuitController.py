@@ -19,6 +19,8 @@ class Point:
         return str(self.x) + ", " + str(self.y)
     def __mul__(self, other):
         return Point(self.x * other, self.y * other)
+    def __truediv__(self, other):
+        return Point(self.x/other, self.y/other)
 
     __rmul__ = __mul__
 
@@ -28,6 +30,7 @@ class PurePersuitController:
         self.points = []
         self.lookAhead = lookAhead
         self.lookAheadPoint = Point(0, 0)
+        self.curvature = 1
         self.maxVelo = None
         self.jsTest = Controllers.JoystickController.JoystickController()
         self.loc = None
@@ -68,8 +71,6 @@ class PurePersuitController:
             else:
                 return None
 
-
-
     def getLookAheadPoint(self, loc):
         self.loc = loc
         # get closest path point
@@ -99,12 +100,16 @@ class PurePersuitController:
                 self.lookAheadPoint = p
         else:
             self.lookAheadPoint = p
-        #self.lookAheadPoint = None;
-
-
 
         #alternatively, get lookahead by picking closest path point, then going one lookahead up that segment
 
+    def calculateArc(self, p):
+        try:
+            r = (self.lookAhead**2)/(2*p.x)
+            self.curvature = 1/r
+        except:
+            return 0
+        return self.curvature
 
     def removePassedPoints(self):
         return
@@ -114,7 +119,10 @@ class PurePersuitController:
         return
 
     def update(self, pos): #optional param sim
-        self.getLookAheadPoint(Point(pos[0], pos[1]))
+        loc = Point(pos[0], pos[1])
+        self.getLookAheadPoint(loc)
+        self.calculateArc(self.lookAheadPoint-loc)
+        #print(self.curvature)
         return self.jsTest.update()
 
     def visualDebug(self, g):
@@ -126,5 +134,17 @@ class PurePersuitController:
 
         pygame.draw.circle(g.screen, (255, 0, 0), g.translatePoint(self.loc), int(g.translateDim(self.lookAhead, 0)[0]), 4)
         pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(self.lookAheadPoint), 4, 0)
-        #print(self.loc)
+
+        #calculate center of desired travel arc
+        midPoint = (self.lookAheadPoint-self.loc)/2
+        perpLen = ((1/self.curvature)**2 - midPoint.mag()**2) ** 0.5
+        perpVec = (Point(-midPoint.y, midPoint.x)/midPoint.mag()) * perpLen
+        center = (self.loc+midPoint) - perpVec
+        pygame.draw.line(g.screen, (0, 255, 0), g.translatePoint(self.loc), g.translatePoint(self.loc+midPoint), 4)
+
+        #pygame.draw.line(g.screen, (0, 255, 0), g.translatePoint(self.loc+midPoint), g.translatePoint(center), 4)
+       # pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 2)
+        #print(center)
+        g.drawCircleArc((255, 255, 0), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 30, 360, 4)
+
         return

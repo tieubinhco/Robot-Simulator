@@ -45,9 +45,7 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
             self.trails.append(trail.Trail(int(5*self.robots[c].getWidth())))
 
             c+=1
-        
 
-      
         
     def translateCoord(self, x, y):
         x = x * (self.screenDimensions[0]/self.worldDimensions[0]) + self.screenDimensions[0]/2
@@ -71,6 +69,18 @@ class Graphics: #graph trail, hold trail buffer array, draw desired paths and en
         rot_image = pygame.transform.rotate(image, angle)
         rot_rect = rot_image.get_rect(center=rect.center)
         return rot_image,rot_rect
+
+    #http://www.cs.ucsb.edu/~pconrad/cs5nm/08F/ex/ex09/drawCircleArcExample.py
+    def degreesToRadians(self, deg):
+        return deg / 180.0 * 3.14159268
+
+    def drawCircleArc(self, color, center, radius, startDeg, endDeg, thickness):
+        (x, y) = center
+        rect = (x - radius, y - radius, radius * 2, radius * 2)
+        startRad = self.degreesToRadians(startDeg)
+        endRad = self.degreesToRadians(endDeg)
+
+        pygame.draw.arc(self.screen, color, rect, startRad, endRad, thickness)
 
     # Draw a robot path for debugging path following
     def drawPath(self, path):
