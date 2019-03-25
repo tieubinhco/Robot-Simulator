@@ -29,9 +29,10 @@ class Point:
 
 
 class PurePersuitController:
-    def __init__(self, lookAhead):
+    def __init__(self, lookAhead, trackRadius):
         self.points = []
         self.lookAhead = lookAhead
+        self.trackRadius = trackRadius
         self.lookAheadPoint = Point(0, 0)
         self.curvature = 1
         self.maxVelo = None
@@ -128,13 +129,19 @@ class PurePersuitController:
         #for i in range(len(self.points)):
         return
 
+    def speedProfiler(self):
+        return
+
     def update(self, pos): #optional param sim
         loc = Point(pos[0], pos[1])
         self.robotTheta = pos[2]
         self.getLookAheadPoint(loc)
         self.calculateArc(self.lookAheadPoint-loc)
         #print(self.curvature)
-        return self.jsTest.update()
+        delta = 1 * self.curvature * self.trackRadius
+        command = [1 + delta, 1 - delta]
+        #print(command)
+        return command#self.jsTest.update()
 
     def visualDebug(self, g):
 
