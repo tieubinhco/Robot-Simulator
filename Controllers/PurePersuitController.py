@@ -1,5 +1,6 @@
 import Controllers.JoystickController
 import pygame
+import math
 
 class Point:
     def __init__(self, x,y ):
@@ -145,6 +146,7 @@ class PurePersuitController:
         #pygame.draw.line(g.screen, (0, 255, 0), g.translatePoint(self.loc+midPoint), g.translatePoint(center), 4)
        # pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 2)
         #print(center)
-        g.drawCircleArc((255, 255, 0), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 30, 360, 4)
+
+        g.drawCircleArc((255, 255, 0), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 180/math.pi*math.atan2(self.loc.y, self.loc.x), 180/math.pi*math.atan2(self.lookAheadPoint.y, self.lookAheadPoint.x), 4)
 
         return
