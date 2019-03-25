@@ -111,11 +111,12 @@ class PurePersuitController:
     def calculateArc(self, p):
         try:
             r = (self.lookAhead**2)/(2*p.x)
-            self.curvature = 1/r
+            self.curvature = abs(1/r)
 
             #get side
             self.side = math.sin(self.robotTheta) * (self.lookAheadPoint.x - self.loc.x) - math.cos(self.robotTheta) * (self.lookAheadPoint.y - self.loc.y)
-
+            self.side = self.side/abs(self.side)
+            self.curvature *= self.side
         except:
             return 0
         return self.curvature
