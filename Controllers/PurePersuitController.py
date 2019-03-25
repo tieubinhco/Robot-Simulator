@@ -144,9 +144,10 @@ class PurePersuitController:
         pygame.draw.line(g.screen, (0, 255, 0), g.translatePoint(self.loc), g.translatePoint(self.loc+midPoint), 4)
 
         #pygame.draw.line(g.screen, (0, 255, 0), g.translatePoint(self.loc+midPoint), g.translatePoint(center), 4)
-       # pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 2)
-        #print(center)
+        #pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 2)
 
-        g.drawCircleArc((255, 255, 0), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 180/math.pi*math.atan2(self.loc.y, self.loc.x), 180/math.pi*math.atan2(self.lookAheadPoint.y, self.lookAheadPoint.x), 4)
+        robotAngle = 180/math.pi*math.atan2(self.loc.y-center.y, self.loc.x-center.x)
+        lookAheadPointAngle = 180/math.pi*math.atan2(self.lookAheadPoint.y-center.y, self.lookAheadPoint.x-center.x)
+        g.drawCircleArc((255, 255, 0), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), lookAheadPointAngle, robotAngle, 4)
 
         return
