@@ -22,6 +22,8 @@ class Point:
         return Point(self.x * other, self.y * other)
     def __truediv__(self, other):
         return Point(self.x/other, self.y/other)
+    def __abs__(self):
+        return Point(abs(self.x), abs(self.y))
 
     __rmul__ = __mul__
 
@@ -35,6 +37,8 @@ class PurePersuitController:
         self.maxVelo = None
         self.jsTest = Controllers.JoystickController.JoystickController()
         self.loc = None
+        self.side = 1
+        self.robotTheta = 0
         return
 
     def addPoint(self, x, y):
@@ -108,6 +112,10 @@ class PurePersuitController:
         try:
             r = (self.lookAhead**2)/(2*p.x)
             self.curvature = 1/r
+
+            #get side
+            self.side = math.sin(self.robotTheta) * (self.lookAheadPoint.x - self.loc.x) - math.cos(self.robotTheta) * (self.lookAheadPoint.y - self.loc.y)
+
         except:
             return 0
         return self.curvature
@@ -121,6 +129,7 @@ class PurePersuitController:
 
     def update(self, pos): #optional param sim
         loc = Point(pos[0], pos[1])
+        self.robotTheta = pos[2]
         self.getLookAheadPoint(loc)
         self.calculateArc(self.lookAheadPoint-loc)
         #print(self.curvature)
@@ -140,14 +149,23 @@ class PurePersuitController:
         midPoint = (self.lookAheadPoint-self.loc)/2
         perpLen = ((1/self.curvature)**2 - midPoint.mag()**2) ** 0.5
         perpVec = (Point(-midPoint.y, midPoint.x)/midPoint.mag()) * perpLen
+        if(self.side < 0):
+            perpVec *= -1
         center = (self.loc+midPoint) - perpVec
-        pygame.draw.line(g.screen, (0, 255, 0), g.translatePoint(self.loc), g.translatePoint(self.loc+midPoint), 4)
+        #pygame.draw.line(g.screen, (0, 255, 0), g.translatePoint(self.loc), g.translatePoint(self.loc+midPoint), 4)
 
         #pygame.draw.line(g.screen, (0, 255, 0), g.translatePoint(self.loc+midPoint), g.translatePoint(center), 4)
         #pygame.draw.circle(g.screen, (0, 255, 255), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), 2)
 
-        robotAngle = 180/math.pi*math.atan2(self.loc.y-center.y, self.loc.x-center.x)
-        lookAheadPointAngle = 180/math.pi*math.atan2(self.lookAheadPoint.y-center.y, self.lookAheadPoint.x-center.x)
-        g.drawCircleArc((255, 255, 0), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), lookAheadPointAngle, robotAngle, 4)
+        try:
+            robotAngle = 180 / math.pi * math.atan2(self.loc.y - center.y, self.loc.x - center.x)
+            lookAheadPointAngle = 180 / math.pi * math.atan2(self.lookAheadPoint.y - center.y, self.lookAheadPoint.x - center.x)
+            if (self.side <= 0):
+                lookAheadPointAngle = lookAheadPointAngle + robotAngle
+                robotAngle = lookAheadPointAngle - robotAngle
+                lookAheadPointAngle = lookAheadPointAngle - robotAngle
 
+            g.drawCircleArc((255, 255, 0), g.translatePoint(center), int(g.translateDim(abs(1/self.curvature), 0)[0]), lookAheadPointAngle, robotAngle, 4)
+        except:
+            return
         return
