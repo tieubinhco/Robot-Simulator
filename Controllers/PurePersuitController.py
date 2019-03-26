@@ -40,10 +40,14 @@ class PurePersuitController:
         self.loc = None
         self.side = 1
         self.robotTheta = 0
+        self.pathDistance = 0
+        self.percentage = 0
         return
 
     def addPoint(self, x, y):
         self.points.append(Point(x, y))
+        if(len(self.points)>1):
+            self.pathDistance += (self.points[len(self.points)-1] - self.points[len(self.points)-2]).mag()
 
     def calculateIntersect(self, loc, start, end): #calculate using parametric subsitution to find intersections https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm/1084899#1084899
         E = start
@@ -102,10 +106,14 @@ class PurePersuitController:
         #print(self.lookAheadPoint)
         if(p == None):
             p = self.calculateIntersect(loc, self.points[closest-1], self.points[closest])
+            E = self.points[closest-1]
+            L = self.points[closest]
             if(p != None):
                 self.lookAheadPoint = p
+                self.updatePercentage(p, closest-1)
         else:
             self.lookAheadPoint = p
+            self.updatePercentage(p, closest)
 
         #alternatively, get lookahead by picking closest path point, then going one lookahead up that segment
 
@@ -129,8 +137,18 @@ class PurePersuitController:
         #for i in range(len(self.points)):
         return
 
+    def updatePercentage(self, P, n):
+        d = 0
+        for i in range(1, n-1):
+            d += (self.points[i] - self.points[i-1]).mag()
+        self.percentage = ((P-self.points[n]).mag() + d)/self.pathDistance
+        #print(self.percentage)
+
+    def getPercentage(self):
+        return self.percentage
+
     def speedProfiler(self):
-        return
+        return 1
 
     def update(self, pos): #optional param sim
         loc = Point(pos[0], pos[1])
@@ -138,8 +156,9 @@ class PurePersuitController:
         self.getLookAheadPoint(loc)
         self.calculateArc(self.lookAheadPoint-loc)
         #print(self.curvature)
-        delta = 1 * self.curvature * self.trackRadius
-        command = [1 + delta, 1 - delta]
+        speed = self.speedProfiler()
+        delta = speed * self.curvature * self.trackRadius
+        command = [speed + delta, speed - delta]
         #print(command)
         return command#self.jsTest.update()
 
