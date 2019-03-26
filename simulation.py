@@ -107,11 +107,9 @@ s.window.trails[0].color = (255, 0, 0)
 #robot1 = robot.Robot(0, 0, 0, 1.00, 0.1, 0.2286, 6.8, 0.1016, 1.67, 100, 0.0, 0.0, 0.0, 0.0)
 
 robot1 = idealrobot.IdealRobot(0, 0, 0, 0.2286)
-purePersuit = Controllers.PurePersuitController.PurePersuitController(0.5, robot1.width)
+purePersuit = Controllers.PurePersuitController.PurePersuitController(0.75, robot1.width)
 purePersuit.addPoint(0, 0)
-purePersuit.addPoint(0, 3)
-purePersuit.addPoint(3, 2)
-purePersuit.addPoint(4, 0)
+purePersuit.addPoint(3, 4)
 
 
 #purePersuit.addPoint(0, 20)

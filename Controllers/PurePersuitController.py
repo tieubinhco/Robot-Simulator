@@ -1,4 +1,5 @@
 import Controllers.JoystickController
+import Controllers.SpeedProfiler
 import pygame
 import math
 
@@ -42,12 +43,14 @@ class PurePersuitController:
         self.robotTheta = 0
         self.pathDistance = 0
         self.percentage = 0
+        self.speedProfiler = Controllers.SpeedProfiler.SpeedProfiler(0.5, 0.3, 0)
         return
 
     def addPoint(self, x, y):
         self.points.append(Point(x, y))
         if(len(self.points)>1):
             self.pathDistance += (self.points[len(self.points)-1] - self.points[len(self.points)-2]).mag()
+            self.speedProfiler = Controllers.SpeedProfiler.SpeedProfiler(0.5, 5, self.pathDistance)
 
     def calculateIntersect(self, loc, start, end): #calculate using parametric subsitution to find intersections https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm/1084899#1084899
         E = start
@@ -139,15 +142,16 @@ class PurePersuitController:
 
     def updatePercentage(self, P, n):
         d = 0
-        for i in range(1, n-1):
+        for i in range(1, n):
             d += (self.points[i] - self.points[i-1]).mag()
-        self.percentage = ((P-self.points[n]).mag() + d)/self.pathDistance
+        self.percentage = ( (P-self.points[n]).mag() + d )/self.pathDistance
         #print(self.percentage)
+        #print(self.speedProfiler.update(self.percentage))
 
     def getPercentage(self):
         return self.percentage
 
-    def speedProfiler(self):
+    def getSpeed(self):
         return 1
 
     def update(self, pos): #optional param sim
@@ -156,7 +160,7 @@ class PurePersuitController:
         self.getLookAheadPoint(loc)
         self.calculateArc(self.lookAheadPoint-loc)
         #print(self.curvature)
-        speed = self.speedProfiler()
+        speed = self.getSpeed()
         delta = speed * self.curvature * self.trackRadius
         command = [speed + delta, speed - delta]
         #print(command)
