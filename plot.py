@@ -27,14 +27,10 @@ class Plot:
         plt.title(self.title)
         plt.grid(True)
 
-
     def addData(self, x, y):
         self.x_data = np.append(self.x_data, x)
         self.y_data = np.append(self.y_data, y)
 
-
     def plot(self):
         plt.plot(self.x_data, self.y_data)
         self.fig.canvas.draw()
-
-
