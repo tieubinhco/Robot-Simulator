@@ -94,9 +94,7 @@ class Robot:
         self.rpmR = self.veloR/self.wheelRadius * (60/(2*math.pi))
         print(str(torqueL) + " " + str(torqueR))
 
-    def getTelemetry(self):
-        return 
-        #return [self.]
+
     def getPos(self):
         return [self.x, self.y, self.head]
     def getWidth(self):
